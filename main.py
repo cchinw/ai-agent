@@ -5,13 +5,14 @@ from langchain.tools import Tool
 from langchain.agents import initialize_agent
 from langchain.agents.agent_types import AgentType
 
+
 # Load environment variables
 load_dotenv()
 anthropic_api_key = os.getenv("ANTHROPIC_API_KEY")
 
 # Set up Claude model
 llm = ChatAnthropic(
-    model="claude-3-opus-20240229",
+    model="claude-3-5-sonnet-20240620",
     temperature=0.5,
     anthropic_api_key=anthropic_api_key
 )
@@ -40,5 +41,5 @@ agent = initialize_agent(
 )
 
 # Ask the agent something
-response = agent.run("What is the square root of 9?")
+response = agent.run("What is 3 multiplied by 3?")
 print(response)
