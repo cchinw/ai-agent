@@ -4,6 +4,7 @@ from langchain_anthropic.chat_models import ChatAnthropic
 from langchain.tools import Tool
 from langchain.agents import initialize_agent
 from langchain.agents.agent_types import AgentType
+from langchain.memory import ConversationBufferMemory
 
 
 # Load environment variables
@@ -17,29 +18,41 @@ llm = ChatAnthropic(
     anthropic_api_key=anthropic_api_key
 )
 
+# Set up memory for the agent
+memory = ConversationBufferMemory(
+    memory_key="chat_history",
+    return_messages=True
+)   
 # Tool: multiply two numbers
-def multiply_numbers(input: str) -> str:
-    try:
-        numbers = [int(x) for x in input.split()]
-        result = numbers[0] * numbers[1]
-        return f"The result is {result}."
-    except:
-        return "Please enter two numbers separated by a space."
+# def multiply_numbers(input: str) -> str:
+#     try:
+#         numbers = [int(x) for x in input.split()]
+#         result = numbers[0] * numbers[1]
+#         return f"The result is {result}."
+#     except:
+#         return "Please enter two numbers separated by a space."
 
-math_tool = Tool(
-    name="Multiplier",
-    func=multiply_numbers,
-    description="Multiplies two numbers. Input should be like: '6 7'"
-)
+# math_tool = Tool(
+#     name="Multiplier",
+#     func=multiply_numbers,
+#     description="Multiplies two numbers. Input should be like: '6 7'"
+# )
 
 # Initialize LangChain Agent
 agent = initialize_agent(
-    tools=[math_tool],
+    tools=[],
     llm=llm,
-    agent=AgentType.CHAT_ZERO_SHOT_REACT_DESCRIPTION,
+    agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
+    memory=memory,
     verbose=True
 )
 
 # Ask the agent something
-response = agent.run("What is 3 multiplied by 3?")
-print(response)
+# response = agent.run("What is 3 multiplied by 3?")
+# print(response)
+
+# Example prompt (multi-turn dialogue)
+print(agent.run("Hi, I'm Wendy."))
+print(agent.run("What's my name?"))
+print(agent.run("Do you have a name?"))
+print(agent.run("But if you could pick a name, what would it be?"))
